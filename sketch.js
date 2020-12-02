@@ -2,7 +2,7 @@ var monkey,monkeyAni,bananaImg,jungle,jungleImg,stoneImg,
     invisibleGround,bananaGroup,stoneGroup,score,a,gameState,PLAY,END;
 
 function preload(){
-  monkeyAni=loadAnimation("Monkey_01.png","Monkey_02.png","Monkey_03.png","Monkey_04.png","Monkey_05.png",           "Monkey_06.png","Monkey_07.png","Monkey_08.png",
+  monkeyAni=loadAnimation("Monkey_01.png","Monkey_02.png","Monkey_03.png","Monkey_04.png","Monkey_05.png","Monkey_06.png","Monkey_07.png","Monkey_08.png",
 "Monkey_09.png","Monkey_10.png");
   
   bananaImg=loadImage("banana.png");
@@ -11,7 +11,7 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(400, 400);
+  canvas=createCanvas(400, 400);
   
   jungle = createSprite(200,200,0,0);
   jungle.addImage("jungle",jungleImg);
@@ -35,94 +35,149 @@ function setup() {
 
 function draw() {
   background(220);
+
+  canvas.mouseClicked(fxn);
   
-  if(gameState===PLAY){
-    monkey.velocityY+=0.8;
-    monkey.collide(invisibleGround);
 
-    spawnBanana();
-    spawnStone();
-    
-    jungle.velocityX=-2;
-    if(jungle.x<0){
-      jungle.x=jungle.width/2;
-    }
+    if(gameState===PLAY){
+      monkey.velocityY+=0.8;
+      monkey.collide(invisibleGround);
 
-    if(monkey.isTouching(bananaGroup)){
+      spawnBanana();
+      spawnStone();
+      
+      jungle.velocityX=-7;
+      if(jungle.x<0){
+        jungle.x=jungle.width/2;
+      }
+
+      if(monkey.isTouching(bananaGroup)){
+        bananaGroup.destroyEach();
+        score+=10;
+      }
+
+      switch(score){
+        case 0:a=0;
+                break;
+        case 10:monkey.scale=0.12;
+                a=1;
+                break;
+        case 20:monkey.scale=0.14;
+                a=2;
+                break;
+        case 30:monkey.scale=0.16;
+                a=3;
+                break;
+        case 40:monkey.scale=0.18;
+                a=4;
+                break;
+        case 50:monkey.scale=0.2;
+                a=5;
+                break;
+      }
+
+      switch(a){
+        case 0: if(keyDown("space")&&monkey.y>=348){
+                  monkey.velocityY-=17;
+                }
+                break;
+
+        case 1: if(keyDown("space")&&monkey.y>=342){
+                  monkey.velocityY-=17;
+                }
+                break;
+
+        case 2: if(keyDown("space")&&monkey.y>=336){
+                  monkey.velocityY-=17;
+                }
+                break;   
+        case 3: if(keyDown("space")&&monkey.y>=330){
+                  monkey.velocityY-=17;
+                }
+                break;
+        case 4: if(keyDown("space")&&monkey.y>=324){
+                  monkey.velocityY-=17;
+                }
+                break;
+        case 5: if(keyDown("space")&&monkey.y>=318){
+                  monkey.velocityY-=17;
+                }
+                break;
+      }
+
+      if(monkey.isTouching(stoneGroup)){
+        gameState=END;
+      }
+    }else if(gameState===END){
+      monkey.visible=false;
+      monkey.velocityY=0;
       bananaGroup.destroyEach();
-      score+=2;
+      stoneGroup.destroyEach();
+      
+      jungle.velocityX=0;
+
+      if(keyDown("r")){
+        gameState=PLAY;
+        score=0;
+        monkey.visible=true;
+        monkey.scale=0.1;  
+      }
     }
 
-    switch(score){
-      case 0:a=0;
-              break;
-      case 10:monkey.scale=0.12;
-              a=1;
-              break;
-      case 20:monkey.scale=0.14;
-              a=2;
-              break;
-      case 30:monkey.scale=0.16;
-              a=3;
-              break;
-      case 40:monkey.scale=0.18;
-              a=4;
-              break;
-      case 50:monkey.scale=0.2;
-              a=5;
-              break;
+    drawSprites();
+    
+    textSize(30);  
+    textAlign(CENTER);
+    fill("white");
+    
+    text("Score: "+score,200,50);
+    
+    if(gameState===END){
+      text("GAME OVER!",200,200);
+      text("Press R or Tap to restart",200,240);
     }
+
+}
+
+function fxn(){
+  if(gameState===PLAY){
+      monkey.velocityY+=0.8;
+      monkey.collide(invisibleGround);
 
     switch(a){
-      case 0: if(keyDown("space")&&monkey.y>=348){
+      case 0: if(monkey.y>=348){
                 monkey.velocityY-=17;
               }
               break;
 
-      case 1: if(keyDown("space")&&monkey.y>=342){
+      case 1: if(monkey.y>=342){
                 monkey.velocityY-=17;
               }
               break;
 
-      case 2: if(keyDown("space")&&monkey.y>=336){
+      case 2: if(monkey.y>=336){
                 monkey.velocityY-=17;
               }
               break;   
-      case 3: if(keyDown("space")&&monkey.y>=330){
+      case 3: if(monkey.y>=330){
                 monkey.velocityY-=17;
               }
               break;
-      case 4: if(keyDown("space")&&monkey.y>=324){
+      case 4: if(monkey.y>=324){
                 monkey.velocityY-=17;
               }
               break;
-      case 5: if(keyDown("space")&&monkey.y>=318){
+      case 5: if(monkey.y>=318){
                 monkey.velocityY-=17;
               }
               break;
     }
 
-    if(monkey.isTouching(stoneGroup)){
-      gameState=END;
-    }
-  }else if(gameState===END){
-    monkey.destroy();
-    bananaGroup.destroyEach();
-    stoneGroup.destroyEach();
-    
-    jungle.velocityX=0;
-  }
-
-  drawSprites();
-  
-  textSize(30);  
-  textAlign(CENTER);
-  fill("white");
-  
-  text("Score: "+score,200,50);
-  
-  if(gameState===END){
-    text("GAME OVER!",200,200);
+  }else{
+    gameState=PLAY;
+    score=0;
+    monkey.visible=true;
+    monkey.scale=0.1;
   }
 }
 
@@ -138,12 +193,12 @@ function spawnBanana(){
 }
 
 function spawnStone(){
-  if(World.frameCount%200===0){
+  if(World.frameCount%240===0){
     stone=createSprite(400,360,0,0);
     stone.addAnimation("stone",stoneImg);
     stone.scale=0.2;    
-    stone.velocityX=-8;
-    stone.lifetime=55;
+    stone.velocityX=-7;
+    stone.lifetime=105;
     stoneGroup.add(stone);
   }
 }
