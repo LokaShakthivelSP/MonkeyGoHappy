@@ -53,7 +53,7 @@ function draw() {
 
       if(monkey.isTouching(bananaGroup)){
         bananaGroup.destroyEach();
-        score+=10;
+        score+=2;
       }
 
       switch(score){
